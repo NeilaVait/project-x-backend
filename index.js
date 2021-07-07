@@ -1,24 +1,27 @@
+require('dotenv').config();
 const express = require('express');
+const morgan = require('morgan');
+const mongoose = require('mongoose');
+
 const app = express();
 
-const mongoose = require('mongoose');
-const { mongoDbString } = require('./config/config');
-
-const port = 4000;
+const PORT = 4000;
 
 mongoose
-  .connect(mongoDbString, {
+  .connect(process.env.MONGO_CONNECT_STRING, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then((result) => {
-    console.log('Serveris veikia');
-    app.listen(3000);
+    console.log('connected to mongoose');
   })
   .catch((err) => console.error(err.message));
 
-app.get('/', (req, res) => res.render('index'));
+// middleware
+app.use(morgan('dev'));
 
-app.listen(port, () => {
-  console.log(`Serveris veikia ${port}`);
+app.get('/', (req, res) => res.status(200).json(`Serveris veikia ant porto ${PORT}`));
+
+app.listen(PORT, () => {
+  console.log(`Back end online on port ${PORT}`);
 });
