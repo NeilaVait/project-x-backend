@@ -20,17 +20,22 @@ mongoose
 
 // middleware
 app.use(morgan('dev'));
+app.use(express.json());
 
 app.get('/', (req, res) => res.status(200).json(`Serveris veikia ant porto ${PORT}`));
 
-app.get('/shop/categories/new', (req, res) => {
-  const newCategory = new Category({
-    title: 'Denim',
-  });
+app.post('/api/shop/categories/new', (req, res) => {
+  // gauti is userio title
+  console.log(req.body);
+  const titleFromUser = req.body.title;
+  // su gautu title sukurti nauja kategorija
+  if (!titleFromUser) return res.status(400).json('no title');
+  const newCategory = new Category({ title: titleFromUser });
+
   newCategory
     .save()
-    .then((result) => res.send(result))
-    .catch((err) => console.error(err.message));
+    .then((result) => res.json(['category created', result]))
+    .catch((err) => res.status(500).json('internal error'));
 });
 
 app.listen(PORT, () => {

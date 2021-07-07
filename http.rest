@@ -2,9 +2,9 @@ GET http://localhost:4000/
 
 ###
 
-POST http://localhost:4000/shop/category/new
+POST http://localhost:4000/api/shop/categories/new
 Content-Type: application/json
 
 {
-  "title": "Denim"
+  "title": "Footwear"
 }
