@@ -31,10 +31,20 @@ router.post('/api/shop/items/new', (req, res) => {
 //get all items
 router.get('/api/shop/items', async (req, res) => {
   try {
-    const items = await ShopItem.find();
+    const items = await ShopItem.find().populate('category');
     res.json(items);
   } catch (err) {
-    res.status(500).json('internal error');
+    res.status(500).json(err);
+  }
+});
+
+// get single item
+router.get('/api/shop/items/:id', async (req, res) => {
+  try {
+    const item = await ShopItem.findById(req.params.id);
+    res.json(item);
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
 
