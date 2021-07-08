@@ -1,18 +1,14 @@
 const express = require('express');
-const ShopCategory = require('../models/category');
+const Item = require('../models/item');
 const router = express.Router();
 
-// gauti visas kategorijas
-
-router.get('/api/shop/categories', (req, res) => {
-  ShopCategory.find()
-    .then((categories) => res.json(categories))
+router.get('/api/shop/items', (req, res) => {
+  Item.find()
+    .then((items) => res.json(items))
     .catch((err) => res.status(500).json(err));
 });
 
-// sukurti nauja kategorija
-
-router.post('/api/shop/categories/new', (req, res) => {
+router.post('/api/shop/items/new', (req, res) => {
   // gauti is userio title
   console.log(req.body);
   const titleFromUser = req.body.title;

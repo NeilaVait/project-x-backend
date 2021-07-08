@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const shopItemSchema = new Schema(
+const shopCartSchema = new Schema(
   {
     title: {
       type: String,
@@ -13,11 +13,6 @@ const shopItemSchema = new Schema(
     price: {
       type: Number,
       required: true,
-    },
-  },
-  {
-    salePrice: {
-      type: Number,
     },
   },
   {
@@ -33,14 +28,8 @@ const shopItemSchema = new Schema(
     },
   },
   {
-    sizeQty: {
-      type: [{ size: String, quantity: Number }],
-      required: true,
-    },
-  },
-  {
-    images: {
-      type: [Number],
+    size: {
+      type: String,
       required: true,
     },
   },
@@ -51,15 +40,21 @@ const shopItemSchema = new Schema(
     },
   },
   {
-    category: {
+    quantity: {
+      type: Number,
+      required: true,
+    },
+  },
+  {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'category',
+      ref: 'user',
     },
   },
   { timestamps: true }
 );
 
-const ShopItem = mongoose.model('ShopItem', shopItemSchema);
+const ShopCart = mongoose.model('shopCart', shopCartSchema);
 
-module.exports = ShopItem;
+module.exports = ShopCart;
