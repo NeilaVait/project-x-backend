@@ -27,6 +27,8 @@ app.get('/', (req, res) => {
 
 // routes
 const catRoutes = require('./routes/catRoutes');
+const itemRoutes = require('./routes/itemRoutes');
 app.use('/', catRoutes);
+app.use('/', itemRoutes);
 
 app.listen(PORT, console.log(`Back end online on port ${PORT}`));
