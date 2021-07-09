@@ -31,8 +31,10 @@ app.get('/', (req, res) => {
 const catRoutes = require('./routes/catRoutes');
 const itemRoutes = require('./routes/itemRoutes');
 const userRoutes = require('./routes/userRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 app.use('/', catRoutes);
 app.use('/', itemRoutes);
 app.use('/', userRoutes);
+app.use('/', cartRoutes);
 
 app.listen(PORT, console.log(`Back end online on port ${PORT}`));
