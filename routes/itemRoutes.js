@@ -9,7 +9,7 @@ router.post('/api/shop/items/new', (req, res) => {
   const newItemData = {
     title: 'Suede Combat Boots - Stone',
     price: 1299.95,
-    image: 'shoe_01_',
+    image: 'shoe_02_',
     color: 'stone',
     sizeQty: [
       { size: 'small', quantity: 5 },

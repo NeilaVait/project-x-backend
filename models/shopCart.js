@@ -8,44 +8,31 @@ const shopCartSchema = new Schema(
       type: String,
       required: true,
     },
-  },
-  {
     price: {
       type: Number,
       required: true,
     },
-  },
-  {
     image: {
       type: String,
       required: true,
     },
-  },
-  {
     color: {
       type: String,
       required: true,
     },
-  },
-  {
     size: {
       type: String,
       required: true,
     },
-  },
-  {
     sku: {
       type: String,
       required: true,
     },
-  },
-  {
+
     quantity: {
       type: Number,
       required: true,
     },
-  },
-  {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

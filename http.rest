@@ -1,4 +1,4 @@
-GET http://localhost:4000/
+GET http://localhost:4000/api/shop/categories
 
 ###
 
@@ -19,3 +19,13 @@ GET http://localhost:4000/api/shop/items
 ### get item by id 
 
 GET http://localhost:4000/api/shop/items/60e699d58d5fc70af45f959d
+
+### create new user
+
+POST http://localhost:4000/api/shop/users/new
+
+### get all users 
+GET http://localhost:4000/api/shop/users
+
+### get single user 
+GET http://localhost:4000/api/shop/users/60e6d6b2992e032664e9adbb

@@ -1,11 +1,11 @@
 const express = require('express');
-const ShopCategory = require('../models/category');
+const Category = require('../models/category');
 const router = express.Router();
 
 // gauti visas kategorijas
 
 router.get('/api/shop/categories', (req, res) => {
-  ShopCategory.find()
+  Category.find()
     .then((categories) => res.json(categories))
     .catch((err) => res.status(500).json(err));
 });
