@@ -8,10 +8,22 @@ router.get('/api/shop/cart/:userId', (req, res) => {
 });
 
 // add item to cart
-router.post('/api/shop/cart/:userId', (req, res) => {
+router.post('/api/shop/cart/:userId', async (req, res) => {
   console.log('got item to add to cart');
   console.log(req.body);
-  res.json('you are about to add item to cart');
+
+  try {
+    // jei jau yra toks cart tai mes norim prideti prie carto objektu
+    const cartExists = Cart.findOne({ userId: req.params.userId });
+    console.log(cartExists.mongooseCollection.name);
+
+    // jei nera sukurti nauja
+    const newCart = new Cart({ userId: req.params.userId, cart: [req.body] });
+    const result = await newCart.save();
+    res.json(result);
+  } catch (err) {
+    res.json(err);
+  }
 });
 
 module.exports = router;
