@@ -3,8 +3,17 @@ const Cart = require('../models/cart');
 const router = express.Router();
 
 // get user cart
-router.get('/api/shop/cart/:userId', (req, res) => {
-  res.json(`You want to get cart of a user ${req.params.userId}`);
+router.get('/api/shop/cart/:userId', async (req, res) => {
+  // res.json(`You want to get cart of a user ${req.params.userId}`);
+  try {
+    // all carts of all users
+    const allCarts = await Cart.find();
+    // find current user cart
+    const currentUserCart = allCarts.find((c) => c.userId == req.params.userId);
+    res.json(currentUserCart.cart);
+  } catch (err) {
+    res.json(err);
+  }
 });
 
 // add item to cart
