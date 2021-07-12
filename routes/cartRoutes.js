@@ -25,10 +25,21 @@ router.post('/api/shop/cart/:userId', async (req, res) => {
     } else {
       // currentCart nelygu nuliui/ cartas jau egzistuoja
       const currentCartArr = currentCart.cart;
-      currentCartArr.push(req.body);
+
+      // ar toks daiktas ir dydis jau yra pas mus masyve
+      const isItemInCartAlready = currentCartArr.find((i) => i.itemId == req.body.itemId);
+      console.log('isItemInCartAlready', isItemInCartAlready);
+      // req.body.size yra currentCartArr
+      if (req.body.size === isItemInCartAlready.size) {
+        isItemInCartAlready.quantity++;
+        console.log('arr atsinaujino', currentCartArr);
+      } else {
+        currentCartArr.push(req.body);
+      }
+
       await Cart.updateOne({ userId: req.params.userId }, { cart: currentCartArr });
 
-      res.json({ msg: 'now in cart', currentCart });
+      res.json({ msg: 'now in cart', currentCart: currentCart.cart });
     }
 
     // res.json('testing')
