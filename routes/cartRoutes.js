@@ -44,36 +44,43 @@ router.post('/api/shop/cart/:userId', async (req, res) => {
   try {
     // ar toks krepselis existuoja
     const currentCart = await Cart.findOne({ userId: req.params.userId }).exec();
-    console.log(' currentCart', Boolean(currentCart));
+
     // jei jau yra toks cart tai mes norim prideti prie cart objektu
     if (!currentCart) {
-      const newCart = new Cart({ userId: req.params.userId, cart: [req.body] });
-      const result = await newCart.save();
-      res.json({ msg: 'created a cart', result });
+      const newCart = await createNewCart(req.params.userId, req.body);
+      res.json({ msg: 'created a cart', newCart: newCart });
     } else {
       // count nelygu nuliui cartas siam vartotojui egzistuoja norim prideti i cart
       //currentCartArr esamas krepselis db
       // req.body = naujas item i krepseli
       const currentCartArr = currentCart.cart;
-      const isItemInCartAlready = currentCartArr.find(
-        (ci) => ci.itemId == req.body.itemId && ci.size === req.body.size
-      );
-      if (isItemInCartAlready) {
-        // qty ++
-        isItemInCartAlready.quantity++;
-        console.log('qty++');
-      } else {
-        console.log('item push');
-        currentCartArr.push(req.body);
-      }
+      increaseQtyOrAddNewItem(isItemVariantInCartAlready(currentCartArr), currentCartArr, req.body);
       await Cart.updateOne({ userId: req.params.userId }, { cart: currentCartArr });
       res.json({ msg: 'now in cart', currentCart });
     }
-
-    // res.json('testing');
   } catch (err) {
     res.json(err);
   }
 });
+
+// helper fn
+async function createNewCart(userId, body) {
+  const newCart = new Cart({ userId: userId, cart: body });
+  await newCart.save();
+  return newCart.cart;
+}
+
+function increaseQtyOrAddNewItem(isItemInCartAlready, currentCartArr, body) {
+  if (isItemInCartAlready) {
+    // qty ++
+    isItemInCartAlready.quantity++;
+  } else {
+    currentCartArr.push(body);
+  }
+}
+
+function isItemVariantInCartAlready(currentCartArr) {
+  return currentCartArr.find((ci) => ci.itemId == req.body.itemId && ci.size === req.body.size);
+}
 
 module.exports = router;
