@@ -19,6 +19,8 @@ const cartSchema = new Schema(
     },
     cart: [
       {
+        title: reqString,
+        image: reqString,
         price: reqNumber,
         color: reqString,
         size: reqString,
