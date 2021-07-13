@@ -1,15 +1,29 @@
 const express = require('express');
 const Cart = require('../models/cart');
+const ShopItem = require('../models/item');
 const router = express.Router();
+
+// get count of carts of a user
+router.get('/api/shop/cart/count/:userId', async (req, res) => {
+  const currentUserCartObj = await Cart.findOne({ userId: req.params.userId }).exec();
+  console.log('currentUserCartObj', currentUserCartObj.cart.length);
+  if (currentUserCartObj.cart) {
+    return res.json(currentUserCartObj.cart.length);
+  }
+  res.json(0);
+});
 
 // get user cart
 router.get('/api/shop/cart/:userId', async (req, res) => {
-  // res.json(`You want to get cart of a user ${req.params.userId}`);
+  console.log('get user cart function ran');
+  // res.json(`You want to get cart of a user ${}`);
   try {
-    // all carts of all users
+    // we find all carts of all users
     const allCarts = await Cart.find();
+    console.log(allCarts);
     // find current user cart
-    const currentUserCart = allCarts.find((c) => c.userId == req.params.userId);
+    const currentUserCart = allCarts.find((u) => u.userId == req.params.userId);
+
     res.json(currentUserCart.cart);
   } catch (err) {
     res.json(err);
