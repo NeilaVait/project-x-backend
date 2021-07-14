@@ -1,26 +1,24 @@
 const express = require('express');
 const ShopItem = require('../models/item');
+const newItemData = require('../models/stock');
 const router = express.Router();
 
 // add new item
 router.post('/api/shop/items/new', (req, res) => {
   console.log(req.body);
 
-  const newItemData = {
-    title: 'Suede Combat Boots - Stone',
-    price: 1299.95,
-    image: 'shoe_02_',
-    color: 'stone',
-    sizeQty: [
-      { size: 'small', quantity: 5 },
-      { size: 'medium', quantity: 5 },
-      { size: 'large', quantity: 6 },
-    ],
-    images: [1, 2, 3, 4],
-    sku: 'shoe_01',
-    category: '60e59315bfe6f411e4186e47',
-  };
-  const newItem = new ShopItem(newItemData);
+  // const newItemData = {
+  //   title: 'Suede Combat Boots - Stone',
+  //   price: 1299.95,
+  //   image: 'shoe_02_',
+  //   color: 'stone',
+  //   size: 'small',
+  //   quantity: 15,
+  //   images: [1, 2, 3, 4],
+  //   sku: 'shoe_01',
+  //   category: '60e59315bfe6f411e4186e47',
+  // };
+  const newItem = new ShopItem(newItemData[0]);
 
   newItem
     .save()

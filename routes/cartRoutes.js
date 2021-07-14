@@ -39,7 +39,12 @@ router.get('/api/shop/cart/:userId', async (req, res) => {
 // add item to cart
 router.post('/api/shop/cart/:userId', async (req, res) => {
   console.log('got item to add to cart');
-  // console.log(req.body);
+  console.log(req.body);
+  console.log('we made cartItem');
+  console.log(shopItemToCartItem(req.body));
+
+  res.status(200).json();
+  return;
 
   try {
     // ar toks krepselis existuoja
@@ -82,6 +87,48 @@ function increaseQtyOrAddNewItem(isItemInCartAlready, currentCartArr, body) {
 
 function isItemVariantInCartAlready(currentCartArr, body) {
   return currentCartArr.find((ci) => ci.itemId == body.itemId && ci.size === body.size);
+}
+
+function shopItemToCartItem(shopItem) {
+  const { title, image, price, salePrice, color, size, sku, _id: itemId } = shopItem;
+  return {
+    title,
+    image,
+    price,
+    salePrice,
+    color,
+    size,
+    sku,
+    itemId,
+  };
+  /*
+  shop item
+  {
+  images: [ 1, 2, 3, 4 ],
+  _id: '60ee8253af44c537dcda3f4f',
+  title: 'Green hat',
+  price: 49.99,
+  image: 'acc_hat_01_',
+  color: 'green',
+  size: 'normal',
+  quantity: 3,
+  sku: 'hat_01',
+  category: '60e592febfe6f411e4186e45',
+}
+
+cart item 
+cart: [
+      {
+        title: reqString,
+        image: reqString,
+        price: reqNumber,
+        color: reqString,
+        size: reqString,
+        sku: reqString,
+        quantity: 1,
+      },
+    ],
+   */
 }
 
 module.exports = router;
