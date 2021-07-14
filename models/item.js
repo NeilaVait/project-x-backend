@@ -26,9 +26,14 @@ const shopItemSchema = new Schema(
       type: String,
       required: true,
     },
-    sizeQty: {
-      type: [{ size: String, quantity: Number }],
+    size: {
+      type: String,
       required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 0,
     },
     images: {
       type: [Number],
