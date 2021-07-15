@@ -97,7 +97,10 @@ async function updateShopItemStock(shopItemId, newQty) {
   // gauti kiek yra item in stock
   console.log({ shopItemId, newQty });
   // naudojant shopitem modeli surasti ir atnaujinti shopitema kurio id === shopitemid
-  await ShopItem.findByIdAndUpdate(shopItemId, { quantity: newQty });
+  const currentShopItem = await ShopItem.findById(shopItemId);
+  currentShopItem.quantity = newQty;
+  const updateResult = await currentShopItem.save();
+  console.log('updateResult ', updateResult, currentShopItem);
 }
 
 async function createNewCart(userId, body) {
