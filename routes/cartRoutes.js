@@ -68,6 +68,26 @@ router.post('/api/shop/cart/:userId', async (req, res) => {
   }
 });
 
+// update cart qty
+// gauti ats json pavidalu req.body
+
+router.put('/api/shop/cart/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  const { cartItemId, newQty } = req.body;
+  // susirasti carta pagal userId,
+  const foundCartObj = await Cart.findOne({ userId: userId }).exec();
+  console.log(' foundCartObj', foundCartObj.cart);
+
+  // paieskoti tam carte item pagal cartId
+  const foundCartItemToBeUpdated = foundCartObj.cart.find((cartItem) => cartItem._id == cartItemId);
+  // higher level example
+  // const foundCartItemToBeUpdated = cart.find(({ _id }) => _id == cartItemId);
+  // atnaujinti kieki to item pagal newQty
+  foundCartItemToBeUpdated.quantity = newQty;
+  const saveResult = await foundCartObj.save();
+  res.json({ msg: 'atnaujinimas in progress', saveResult });
+});
+
 // helper fn
 async function createNewCart(userId, body) {
   const newCart = new Cart({ userId: userId, cart: [shopItemToCartItem(body)] });
@@ -89,34 +109,22 @@ function isItemVariantInCartAlready(currentCartArr, body) {
 }
 
 function shopItemToCartItem(shopItem) {
-  const { title, image, price, salePrice, color, size, sku, _id: itemId } = shopItem;
-  return {
-    title,
-    image,
-    price,
-    salePrice,
-    color,
-    size,
-    sku,
-    itemId,
-  };
   /*
   shop item
   {
-  images: [ 1, 2, 3, 4 ],
-  _id: '60ee8253af44c537dcda3f4f',
-  title: 'Green hat',
-  price: 49.99,
-  image: 'acc_hat_01_',
-  color: 'green',
+  images: [ 1, 2, 3 ],
+  _id: '60ee82dc057db7c88f4ab4cb',
+  title: 'Trench Biker Jeans',
+  price: 111.99,
+  image: 'denim_jeans_01_',
+  color: 'blue',
   size: 'normal',
-  quantity: 3,
-  sku: 'hat_01',
-  category: '60e592febfe6f411e4186e45',
+  quantity: 8,
+  sku: 'jeans_01',
+  category: 4545454
 }
-
-cart item 
-cart: [
+  cart item
+  cart: [
       {
         title: reqString,
         image: reqString,
@@ -124,10 +132,22 @@ cart: [
         color: reqString,
         size: reqString,
         sku: reqString,
-        quantity: 1,
+        itemId: 45645645
+        quantity: 1
+        },
       },
     ],
-   */
+  */
+  const { title, image, price, salePrice, color, size, sku, _id: itemId } = shopItem;
+  return {
+    title,
+    image,
+    price: salePrice || price,
+    color,
+    size,
+    sku,
+    itemId,
+  };
 }
 
 module.exports = router;
