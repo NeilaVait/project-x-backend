@@ -93,7 +93,7 @@ router.put('/api/shop/cart/:userId', async (req, res) => {
 
 // helper fn
 
-async function updateShopItemStock(shopItemId, newQty) {
+async function updateShopItemStock(shopItemId, difference) {
   // console.log('updateShopItemStock');
   // gauti kiek yra item in stock
   console.log({ shopItemId, newQty });
