@@ -46,4 +46,16 @@ router.get('/api/shop/items/:id', async (req, res) => {
   }
 });
 
+// get items by category
+
+router.get('/api/shop/:category/items', async (req, res) => {
+  try {
+    const catTitle = req.params.category;
+    const items = await ShopItem.find({ category: catTitle }).populate('category');
+    res.json(items);
+  } catch (err) {
+    console.error(err);
+  }
+});
+
 module.exports = router;

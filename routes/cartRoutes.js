@@ -36,47 +36,13 @@ router.get('/api/shop/cart/:userId', async (req, res) => {
   }
 });
 
-// add item to cart
-router.post('/api/shop/cart/:userId', async (req, res) => {
-  // console.log('got item to add to cart');
-  // console.log(req.body);
-  // console.log('we made cartItem');
-  // console.log(shopItemToCartItem(req.body));
-
-  try {
-    // ar toks krepselis existuoja
-    const currentCart = await Cart.findOne({ userId: req.params.userId }).exec();
-
-    // jei krepselis nesukurtas siam vartotojui
-    if (!currentCart) {
-      // console.log('newcart');
-      const newCart = await createNewCart(req.params.userId, req.body);
-      await updateShopItemStock(req.body._id, -1);
-      res.json({ msg: 'created a cart', newCart: newCart });
-    } else {
-      // vartotojas jau turi krepseli
-      // arba didinam kieki arba dedam nauja preke
-      const currentCartArr = currentCart.cart;
-      increaseQtyOrAddNewItem(isItemVariantInCartAlready(currentCartArr, req.body), currentCartArr, req.body);
-
-      await Cart.updateOne({ userId: req.params.userId }, { cart: currentCartArr });
-      // sumazinam item quantity
-      await updateShopItemStock(req.body._id, -1);
-
-      res.json({ msg: 'now in cart', currentCart });
-    }
-  } catch (err) {
-    res.json(err);
-  }
-});
-
 // update cart qty
 // gauti ats json pavidalu req.body
-
 router.put('/api/shop/cart/:userId', async (req, res) => {
   const userId = req.params.userId;
   const { cartItemId, newQty } = req.body;
   // susirasti carta pagal userId,
+  console.log(' cartItemId, newQty', cartItemId, newQty);
   const foundCartObj = await Cart.findOne({ userId: userId }).exec();
 
   // paieskoti tam carte item pagal cartId
@@ -84,25 +50,63 @@ router.put('/api/shop/cart/:userId', async (req, res) => {
   // higher level example
   // const foundCartItemToBeUpdated = cart.find(({ _id }) => _id == cartItemId);
   // atnaujinti kieki to item pagal newQty
-  const difference = newQty - foundCartItemToBeUpdated.quantity;
+  const difference = foundCartItemToBeUpdated.quantity - newQty;
+  console.log(' difference', difference);
   foundCartItemToBeUpdated.quantity = newQty;
   const saveResult = await foundCartObj.save();
-  // updateShopItemStock(foundCartItemToBeUpdated.itemId, difference);
+  updateShopItemStock(foundCartItemToBeUpdated.itemId, difference);
   res.json({ msg: 'atnaujinimas in progress', saveResult });
 });
 
-// helper fn
+// add item to cart
+router.post('/api/shop/cart/:userId', async (req, res) => {
+  try {
+    // ar toks krepselis existuoja
+    const currentCart = await Cart.findOne({ userId: req.params.userId }).exec();
+    // console.log(' currentCart', currentCart);
+    // jei krepselop siam vartotojui nera sukurta
+    if (!currentCart) {
+      // console.log('new cart');
+      const newCart = await createNewCart(req.params.userId, req.body);
+      await updateShopItemStock(req.body._id, -1);
+      res.json({ msg: 'created a cart', newCart: newCart });
+    } else {
+      // vartotojas jau turi kreplseli
+      // arba padidinti kieki vienetu jei ta pati preke arba prideti nauja i krepseli
+      const currentCartArr = currentCart.cart;
+      increaseQtyOrAddNewItem(isItemVariantInCartAlready(currentCartArr, req.body), currentCartArr, req.body);
+      await Cart.updateOne({ userId: req.params.userId }, { cart: currentCartArr });
+      // sumazinam item quantity kuris buvo nupirktas
+      await updateShopItemStock(req.body._id, -1);
+      res.json({ msg: 'add item to cart', currentCart });
+    }
+  } catch (err) {
+    res.json(err);
+  }
+});
 
+// remove item from cart
+router.put('/api/shop/cart/delete/:userId', async (req, res) => {
+  try {
+    // res.json({ userId: req.params.userId, cartId: req.body.itemId });
+    const userId = req.params.userId;
+    const cartIndividualId = req.body.itemId;
+    const foundCartObj = await Cart.findOne({ userId: userId }).exec();
+    foundCartObj.cart = foundCartObj.cart.filter(({ itemId }) => itemId != cartIndividualId);
+    // res.json(filteredCart);
+    const finalCartObj = await foundCartObj.save();
+    res.json(finalCartObj);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
+// helper fn
 async function updateShopItemStock(shopItemId, difference) {
-  // console.log('updateShopItemStock');
-  // gauti kiek yra item in stock
-  console.log({ shopItemId, newQty });
-  // naudojant shopitem modeli surasti ir atnaujinti shopitema kurio id === shopitemid
+  // const updateResult = await ShopItem.findByIdAndUpdate(shopItemId, { quantity: difference }).exec();
   const currentShopItem = await ShopItem.findById(shopItemId);
   currentShopItem.quantity = currentShopItem.quantity + difference;
-  const updateResult = await currentShopItem.save();
-
-  // console.log('updateResult ', updateResult, currentShopItem);
+  await currentShopItem.save();
 }
 
 async function createNewCart(userId, body) {
