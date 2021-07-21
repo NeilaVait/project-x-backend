@@ -48,7 +48,7 @@ router.get('/api/shop/items/:id', async (req, res) => {
 
 // get items by category
 
-router.get('/api/shop/items/:category/:catId', async (req, res) => {
+router.get('/api/shop/items/category/:catId', async (req, res) => {
   try {
     const catId = req.params.catId;
     const items = await ShopItem.find({ category: catId });
