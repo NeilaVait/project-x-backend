@@ -54,7 +54,10 @@ router.get('/api/shop/items/category/:catId', async (req, res) => {
     const items = await ShopItem.find({ category: catId });
     res.json(items);
   } catch (err) {
-    console.error(err);
+    // kol kuriam aplikacija
+    res.json(err);
+    // productione naudojam
+    res.sendStatus(500);
   }
 });
 
